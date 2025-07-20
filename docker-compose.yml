@@ -1,37 +1,30 @@
-# docker-compose.yml
-version: '3.8' # Specify the Docker Compose file format version
+version: '3.8'
 
 services:
-  # Service definition for API 1
   api1:
     build:
-      context: ./api_one # Specifies the build context (where the Dockerfile is located)
-      dockerfile: Dockerfile # Specifies the name of the Dockerfile to use
+      context: ./api_one
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080" # Maps host port 8080 to container port 8080. This is how users access API 1.
+      - "8080:8080"
     environment:
-      # Optional: You can pass environment variables to your Go application
-      # GIN_MODE: release # Uncomment to set Gin to release mode inside the container for less verbose logs
-      API2_URL: http://api2:8081/message # Example of an env var if API2 URL was configurable in main.go
-    restart: on-failure # Automatically restart the container if it exits with a non-zero status
+      API2_URL: http://api2:8081/message 
+    restart: on-failure
     networks:
-      - app-network # Assigns this service to the 'app-network'
+      - app-network
 
-  # Service definition for API 2
   api2:
     build:
-      context: ./api_two # Specifies the build context for API 2
-      dockerfile: Dockerfile # Specifies the Dockerfile for API 2
+      context: ./api_two
+      dockerfile: Dockerfile
     ports:
-      - "8081:8081" # Exposes API 2's port to the host. Useful for direct testing, though API 1 uses internal network.
+      - "8081:8081" 
     environment:
-      # GIN_MODE: release # Uncomment for production
-      PORT: 8081 # Explicitly set port, though Gin defaults to 8080 and we specify it in .Run()
-    restart: on-failure # Automatically restart the container if it fails
+      PORT: 8081 
+    restart: on-failure
     networks:
-      - app-network # Assigns this service to the 'app-network'
+      - app-network
 
-# Define the custom network for inter-service communication
 networks:
   app-network:
-    driver: bridge # Use a bridge network, which is the default and suitable for this setup
+    driver: bridge
